@@ -14,13 +14,14 @@ public class GenerateCrops : MonoBehaviour
     private int cropsCellSize;
     private int cropsSpacing;
     private int cropsMaxSize;
+    private int actualcrops;
 
     private GridLayoutGroup cropsLayoutGroup;
 
     private void Awake()
     {
-        // Pedir cropsRow a la base de datos, de momento incializamos en 5
-        cropsRows = 5;
+        // Pedir cropsRow a la base de datos, de momento incializamos en 4
+        cropsRows = 1;
 
         // Indicamos el mayor tamaño que va a tener el parterre
         cropsMaxSize = CELL_IDEL_SIZE + CELL_IDEL_SPACING;
@@ -30,18 +31,30 @@ public class GenerateCrops : MonoBehaviour
         cropsLayoutGroup.constraintCount = cropsRows;
     }
 
+    
+
     private void Start()
     {
         GenerateCropsLands();
     }
 
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.F))
+        {
+            SetCropsRows();
+            
+        }
+    }
+
     public int GetCropsRows() => cropsRows;
 
-    public void SetCropsRows(int number)
+    public void SetCropsRows()
     {
-        cropsRows = number;
+        cropsRows++;
         cropsLayoutGroup.constraintCount = cropsRows;
 
+        DeleteCrops();
         GenerateCropsLands();
     }
 
@@ -61,9 +74,20 @@ public class GenerateCrops : MonoBehaviour
                 temp.transform.name = "Crops_" + cellsGenerated.ToString("00000000");
                 temp.name = "Crops_" + cellsGenerated.ToString("00000000");
                 cellsGenerated++;
+
             }
         }
+       
     }
+
+    private void DeleteCrops()
+    {
+        for (int i = 0; i < this.transform.childCount; i++)
+        {
+            Destroy(this.transform.GetChild(i).gameObject);
+        }
+    }
+
 
     private void CalculateCellSize()
     {

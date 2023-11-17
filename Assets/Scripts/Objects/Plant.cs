@@ -1,3 +1,5 @@
+using System;
+
 public class Plant
 {
     private int plantId;
@@ -16,4 +18,12 @@ public class Plant
         this.sellPrice = sellPrice;
         this.buyPrice = buyPrice;
     }
+
+    public int getPlantId () {  return plantId; }
+    public string getPlantName () {  return plantName; }
+    public float getGrowTime () {  return growTime; }
+    public int getStackQuantity () {  return stackQuantity; }
+    public float getSellPrice () {  return sellPrice; }
+    public float getBuyPrice () {  return buyPrice; }
+
 }
