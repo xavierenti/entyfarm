@@ -72,6 +72,9 @@ public class CropGrow : MonoBehaviour
         }
     }
 
+    public Plant GetPlant() => currentPlant;
+    public float GetCropGrowTimer() => cropGrowTimer;
+
     public void Plant()
     {
         hasPlantGrowing = true;
