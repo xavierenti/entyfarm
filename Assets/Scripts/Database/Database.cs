@@ -62,6 +62,26 @@ public class Database : MonoBehaviour
 
     }
 
+    public List<CellsSave> LoadGame(int saveID)
+    {
+        // SOLO DEBEMOS CARGAR LOS CULTIVOS DE LA PARTIDA, YA QUE UTILIZAMOS LA PARTIDA EN SI DE LA LISTA PARA PODER ESCOGERLA
+
+        List<CellsSave> cells = new List<CellsSave>();
+
+        // Nos conectamos a la base de datos y ejecutamos el comando de recibir todas las plantas
+        IDbCommand cmd = conn.CreateCommand();
+        // SELECT savedgames_cells.x, savedgames_cells.y, savedgames_cells.time, savedgames_cells.id_plant FROM savedgames_cells WHERE savedgames_cells.id_savedgame = 1;
+        cmd.CommandText = "SELECT savedgames_cells.x, savedgames_cells.y, savedgames_cells.growtime, savedgames_cells.id_plant FROM savedgames_cells WHERE savedgames_cells.id_savedgame = " + GameManager._GAMEMANAGER.GetSaveID();
+        IDataReader reader = cmd.ExecuteReader();
+
+        while (reader.Read())
+        {
+            cells.Add(new CellsSave(reader.GetInt32(0), reader.GetInt32(1), reader.GetFloat(2), reader.GetInt32(3)));
+        }
+
+        return cells;
+    }
+
     public List<Plant> GetUserPlants()
     {
         List<Plant> userPlants = new List<Plant>();

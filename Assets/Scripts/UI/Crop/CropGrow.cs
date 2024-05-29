@@ -74,6 +74,48 @@ public class CropGrow : MonoBehaviour
 
     public Plant GetPlant() => currentPlant;
     public float GetCropGrowTimer() => cropGrowTimer;
+    public void SetCurrentPlantObject(GameObject newPlantObject) => currenPlantObject = newPlantObject;
+
+    public void LoadPlant(float timer)
+    {
+        hasPlantGrowing = true;
+
+        currentPlant = currenPlantObject.GetComponent<UserPlantClickable>().GetPlantSelected();
+
+        plantImage.enabled = true;
+        plantImage.sprite = GameManager._GAMEMANAGER.GetPlantSprite();
+
+        cropGrowTime = GameManager._GAMEMANAGER.GetPlantGrowTime();
+        cropGrowTimeState = cropGrowTime / 3f;
+
+        currentState = GrowStates.SEED;
+        cropGrowTimer = timer;
+
+        if (cropGrowTimer > cropGrowTimeState)
+        {
+            currentState = GrowStates.GROW;
+            cropGrowTimeState = cropGrowTimeState * 2;
+
+            if (cropGrowTimer > cropGrowTimeState)
+            {
+                currentState = GrowStates.PLANT;
+                cropGrowTimeState = cropGrowTime;
+
+                if (cropGrowTimer > cropGrowTimeState)
+                {
+                    currentState = GrowStates.READY;
+                    hasPlantGrowing = false;
+                }
+            }
+        }
+
+        crop_controller.SetHasPlant(hasPlantGrowing);
+        crop_controller.SetIsPlantGrown(false);
+        crop_controller.SetCropState(currentState);
+        crop_controller.SetOutlineColor(new Color(1, 0, 0));
+
+        GameManager._GAMEMANAGER.SubstractPlantQuantity(currenPlantObject);
+    }
 
     public void Plant()
     {
