@@ -77,6 +77,13 @@ public class Database : MonoBehaviour
         return userPlants;
     }
 
+    public void BuyPlant(int idPlant)
+    {
+        IDbCommand cmd = conn.CreateCommand();
+        cmd.CommandText = "INSERT INTO plants_users (id_plant, id_user) VALUES (" + idPlant + ", " + GameManager._GAMEMANAGER.GetUsderID() + ");";
+        cmd.ExecuteReader();
+    }
+
     public List<Save> GetAllSaves()
     {
         saves.Clear();
@@ -126,5 +133,68 @@ public class Database : MonoBehaviour
         }
 
         Debug.Log("Game Saved");
+    }
+    public void GenerateCellsSave(int save_id)
+    {
+        IDbCommand cmd = conn.CreateCommand();
+
+        for (int i = 0; i < 25; i++)
+        {
+            int x = (int)i / 5;
+            int y = (int)i % 5;
+
+            //INSERT INTO savedgames_cells (x, y, growtime, id_plant, id_savedgame) VALUES (0, 0, 0, 1, 1);
+            cmd.CommandText = "INSERT INTO savedgames_cells (x, y, growtime, id_plant, id_savedgame) VALUES (" + x + ", " + y + ", 0, 1, " + save_id + ");";
+            Debug.Log(cmd.CommandText);
+            cmd.ExecuteNonQuery();
+        }
+    }
+
+    public int GenerateSave(int user_id)
+    {
+        IDbCommand cmd = conn.CreateCommand();
+        //INSERT INTO savedgames (time, size, money, id_user) VALUES (0, 5, 0, 1);
+        cmd.CommandText = "INSERT INTO savedgames (time, size, money, id_user) VALUES (0, 5, 0, " + user_id + ");";
+        Debug.Log(cmd.CommandText);
+        cmd.ExecuteNonQuery();
+
+        cmd.CommandText = "SELECT savedgames.id_savedgame FROM savedgames ORDER BY savedgames.id_savedgame DESC LIMIT 1;";
+        IDataReader reader = cmd.ExecuteReader();
+
+        int saveID = 0;
+
+        while (reader.Read())
+        {
+            saveID = reader.GetInt32(0);
+        }
+
+        return saveID;
+    }
+
+    public int GetCreatedUser()
+    {
+        IDbCommand cmd = conn.CreateCommand();
+        // SELECT users.id_user FROM users ORDER BY users.id_user DESC LIMIT 1;
+        cmd.CommandText = "SELECT users.id_user FROM users ORDER BY users.id_user DESC LIMIT 1;";
+        Debug.Log(cmd.CommandText);
+        IDataReader reader = cmd.ExecuteReader();
+
+        int userID = 0;
+
+        while (reader.Read())
+        {
+            userID = reader.GetInt32(0);
+        }
+
+        return userID;
+    }
+
+    public void CreateUser(string username)
+    {
+        // la contraseña sera enti ya que es obligatorio
+        IDbCommand cmd = conn.CreateCommand();
+        cmd.CommandText = "INSERT INTO users (user, password) VALUES ('" + username + "', 'enti');";
+        Debug.Log(cmd.CommandText);
+        cmd.ExecuteNonQuery();
     }
 }
